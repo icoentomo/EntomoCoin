@@ -5,6 +5,7 @@ var MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 module.exports = function (deployer) {
 
 	maxCap = 1300000;
+	//TODO change to real addresses of Entomo team
 	return deployer.deploy(MultiSigWallet, [web3.eth.accounts[5], web3.eth.accounts[6]], 2).then(
 		function () {
 			console.log("MultiSigWallet address: " + MultiSigWallet.address);

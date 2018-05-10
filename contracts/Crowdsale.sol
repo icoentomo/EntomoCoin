@@ -22,6 +22,7 @@ contract Crowdsale is Ownable {
     // max amount of token for sale during ICO
     uint256 public maxCap;
     // 250 ENT for 1 ETH 
+    //TODO may change before ICO
     uint256 constant ENT_IN_ETH = 250;
 
     /**
