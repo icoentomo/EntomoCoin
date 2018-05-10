@@ -26,6 +26,7 @@ truffle test
 ## Metrics 
 - pre-ICO dates : 18 june 2018 - 10 july 2018 (25 days)
 - ICO dates : 10 - 28 september 2018  (18 days)
+- tokens for sale : 1,300,000
 - token price = 4€
 - 1 ETH = 600€ 
 - *1 ETH = 250 ENT*
