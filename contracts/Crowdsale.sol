@@ -33,8 +33,10 @@ contract Crowdsale is Ownable {
     * @param amount of tokens purchased
     */
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+    event Refund(address indexed purchaser, uint256 value);
 
     function Crowdsale(address _ENToken, address _to, uint256 _maxCap) {
+        require(_maxCap>0);
         coin = ENToken(_ENToken);
         multisigVault = _to;
         maxCap = _maxCap;
@@ -50,27 +52,24 @@ contract Crowdsale is Ownable {
         buyTokens(msg.sender);
     }
 
-    // allow owner to modify address of wallet
-    function setMultiSigVault(address _multisigVault) public onlyOwner {
-        require(_multisigVault != address(0));
-        multisigVault = _multisigVault;
-    }
-
     // compute amount of token based on 1 ETH = 200 ENT
     function getTokenAmount(uint256 _weiAmount) internal returns(uint256) {
         // minimum deposit amount is 0.001 ETH
-        if (_weiAmount < 0.001 * (10 ** 18)) {
+        if (_weiAmount < 0.001 ether) {
           return 0;
         }
 
         uint256 tokens = _weiAmount.mul(ENT_IN_ETH);
         // compute bonus
         if(now > preIcoStartTime && now < preIcoEndTime) {
-            tokens += (tokens * 25) / 100; // 25% for preICO
-        } else if(now < icoStartTime + 7 * 1 days) {
-            tokens += (tokens * 15) / 100; // 15% for first week preICO
-        }else if(now < icoStartTime + 14 * 1 days) {
-            tokens += (tokens * 10) / 100; // 10% for second week
+            // 25% for preICO
+            tokens = tokens.add(tokens.mul(25).div(100)) ; 
+        } else if(now < icoStartTime + 7 days) {
+            // 15% for first week preICO
+            tokens = tokens.add(tokens.mul(15).div(100)); 
+        }else if(now < icoStartTime + 14 days) {
+            // 10% for second week
+            tokens = tokens.add(tokens.mul(10).div(100)); 
         }
         return tokens;
     }
@@ -90,12 +89,12 @@ contract Crowdsale is Ownable {
         require(tokens > 0);
 
         // check if we are over maxCap
-        if (tokensSold + tokens > maxCap) {
+        if (tokensSold.add(tokens) > maxCap) {
           // send remaining tokens to user
-          uint256 overSoldTokens = (tokensSold + tokens) - maxCap;
-          refundWeiAmount = weiAmount * overSoldTokens / tokens;
-          weiAmount = weiAmount - refundWeiAmount;
-          tokens = tokens - overSoldTokens;
+          uint256 overSoldTokens = tokensSold.add(tokens).sub(maxCap);
+          refundWeiAmount = weiAmount.mul(overSoldTokens).div(tokens);
+          weiAmount = weiAmount.sub(refundWeiAmount);
+          tokens = tokens.sub(overSoldTokens);
         }
 
         // update state
@@ -109,6 +108,7 @@ contract Crowdsale is Ownable {
         // return extra ether to last user
         if (refundWeiAmount > 0) {
           beneficiary.transfer(refundWeiAmount);
+          Refund(beneficiary,refundWeiAmount);
         }
     }
 
@@ -119,10 +119,8 @@ contract Crowdsale is Ownable {
 
     // Finalize crowdsale buy burning the remaining tokens
     // can only be called when the ICO is over
-    function finalizeCrowdsale() {
+    function burnRemainingTokens() {
         require(hasEnded());
-        require(coin.balanceOf(this) > 0);
-
         coin.burn(coin.balanceOf(this));
     }
 }

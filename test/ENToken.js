@@ -91,6 +91,21 @@ contract('ICO', function (accounts) {
         }
         throw new Error("I should never see this!")
     });
+    /** 
+       it("Should not buy more than all tokens", async function () {
+           let secToTravel = (new Date("Sep 27 2018 00:00:03 GMT").getTime() - Date.now()) / 1000;
+           await timeTravel(Math.floor(secToTravel));  //go to no bonus zone
+           let balanceOld = web3.fromWei(web3.eth.getBalance(buyer), 'ether').valueOf()
+           console.log('balanceOld',balanceOld)
+           let balance = await investEther(6000, buyer); // should refund 800 ETH, max is 5200 ETH
+           let balanceNew = web3.fromWei(web3.eth.getBalance(buyer), 'ether').valueOf()
+           console.log('balanceNew',balanceNew)
+           totalTokensSold = 1300000 * 10 ** 18;
+           buyerTokenBalance = 1300000 * 10 ** 18;
+           assert.equal(balance.valueOf(), buyerTokenBalance, buyerTokenBalance + " wasn't in the buyer account.");
+           assert.equal(balanceOld - balanceNew, 5200, "Refund didnt work.");
+       });
+    */
 
     it("Should Buy 250 tokens + 25% on week 1 -> 312.5 tokens", async function () {
         let secToTravel = (new Date("Jun 18 2018 00:00:03 GMT").getTime() - Date.now()) / 1000;
@@ -139,7 +154,6 @@ contract('ICO', function (accounts) {
         assert.equal(balance.valueOf(), buyerTokenBalance, buyerTokenBalance + " wasn't in the buyer account.");
     });
 
-
     it("Should not be able to purchase token after ICO", async function () {
         await timeTravel(86400 * 7); // 7 days later, ICO finished
         await mineBlock(); // workaround for https://github.com/ethereumjs/testrpc/issues/336
@@ -165,11 +179,8 @@ contract('ICO', function (accounts) {
     it("Should burn the remaining tokens", async function () {
         let token = await ENToken.deployed();
         let ico = await Crowdsale.deployed();
-
-        let txn = await ico.finalizeCrowdsale({ from: owner });
+        let txn = await ico.burnRemainingTokens({ from: owner });
         let balance = await token.balanceOf.call(Crowdsale.address);
-
-
         assert.equal(balance.valueOf(), 0, "Crowdsale contract still have tokens.");
         await printBalance();
     });
