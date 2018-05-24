@@ -53,7 +53,7 @@ contract Crowdsale is Ownable {
     }
 
     // compute amount of token based on 1 ETH = 250 ENT
-    function  getTokenAmount(uint256 _weiAmount)  internal returns(uint256)  {
+    function getTokenAmount(uint256 _weiAmount)  internal returns(uint256)  {
         // minimum deposit amount is 0.001 ETH
         if (_weiAmount < 0.001 ether) {
           return 0;
@@ -67,7 +67,7 @@ contract Crowdsale is Ownable {
         } else if(now <= icoStartTime + 7 days) {
             // 15% for first week preICO
             tokens = tokens.add(tokens.mul(15).div(100)); 
-        }else if(now <= icoStartTime + 14 days) {
+        } else if(now <= icoStartTime + 14 days) {
             // 10% for second week
             tokens = tokens.add(tokens.mul(10).div(100)); 
         }
