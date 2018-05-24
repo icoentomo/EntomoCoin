@@ -22,7 +22,7 @@ contract Crowdsale is Ownable {
     // max amount of token for sale during ICO
     uint256 public maxCap;
     // 250 ENT for 1 ETH 
-    //TODO may change before ICO
+    // TODO may change before ICO
     uint256 constant ENT_IN_ETH = 250;
 
     /**
@@ -52,8 +52,8 @@ contract Crowdsale is Ownable {
         buyTokens(msg.sender);
     }
 
-    // compute amount of token based on 1 ETH = 200 ENT
-    function getTokenAmount(uint256 _weiAmount) internal returns(uint256) {
+    // compute amount of token based on 1 ETH = 250 ENT
+    function  getTokenAmount(uint256 _weiAmount)  internal returns(uint256)  {
         // minimum deposit amount is 0.001 ETH
         if (_weiAmount < 0.001 ether) {
           return 0;
@@ -61,13 +61,13 @@ contract Crowdsale is Ownable {
 
         uint256 tokens = _weiAmount.mul(ENT_IN_ETH);
         // compute bonus
-        if(now > preIcoStartTime && now < preIcoEndTime) {
+        if(now >= preIcoStartTime && now <= preIcoEndTime) {
             // 25% for preICO
             tokens = tokens.add(tokens.mul(25).div(100)) ; 
-        } else if(now < icoStartTime + 7 days) {
+        } else if(now <= icoStartTime + 7 days) {
             // 15% for first week preICO
             tokens = tokens.add(tokens.mul(15).div(100)); 
-        }else if(now < icoStartTime + 14 days) {
+        }else if(now <= icoStartTime + 14 days) {
             // 10% for second week
             tokens = tokens.add(tokens.mul(10).div(100)); 
         }
@@ -117,7 +117,7 @@ contract Crowdsale is Ownable {
         return now > icoEndTime || tokensSold >= maxCap;
     }
 
-    // Finalize crowdsale buy burning the remaining tokens
+    // Finalize crowdsale by burning the remaining tokens
     // can only be called when the ICO is over
     function burnRemainingTokens() {
         require(hasEnded());

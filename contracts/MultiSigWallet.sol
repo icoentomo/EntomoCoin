@@ -219,7 +219,7 @@ contract MultiSigWallet {
         Revocation(msg.sender, transactionId);
     }
 
-    /// @dev Allows anyone to execute a confirmed transaction.
+    /// @dev Allows anyone who confirmed the tx to execute it.
     /// @param transactionId Transaction ID.
     function executeTransaction(uint transactionId)
         public

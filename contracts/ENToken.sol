@@ -4,7 +4,7 @@ pragma solidity ^0.4.15;
 import './BurnableToken.sol';
 import './Ownable.sol';
 
-contract ENToken is BurnableToken, Ownable {
+contract ENToken is BurnableToken {
 
     string public constant name = "EntomoCoin";
     string public constant symbol = "ENT";
