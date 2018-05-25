@@ -1,8 +1,8 @@
-var ENToken = artifacts.require("./ENToken.sol"),
+let ENToken = artifacts.require("./ENToken.sol"),
     Crowdsale = artifacts.require("./Crowdsale.sol"),
     MultiSigWallet = artifacts.require("./MultiSigWallet.sol");
 
-var eth = web3.eth,
+let eth = web3.eth,
     owner = eth.accounts[0],
     wallet = eth.accounts[1],
     buyer = eth.accounts[2],
@@ -11,10 +11,9 @@ var eth = web3.eth,
     buyerTokenBalance = 0,
     buyer2TokenBalance = 0;
 
-var totalSupply = 1300000,
+let totalSupply = 1300000,
     totalTokenForSale = 1300000,
     maxCap = totalTokenForSale;
-
 
 const timeTravel = function (time) {
     return new Promise((resolve, reject) => {
@@ -186,7 +185,6 @@ contract('ICO', function (accounts) {
     });
 
     it("Transfer funds from multisig to accounts[8]", async function () {
-
         let balanceOld = await web3.eth.getBalance(web3.eth.accounts[8]).valueOf()
 
         let multiSig = await MultiSigWallet.deployed();
@@ -196,7 +194,5 @@ contract('ICO', function (accounts) {
         let balance = await web3.eth.getBalance(web3.eth.accounts[8]).valueOf()
         console.log(balance)
         assert.equal(web3.fromWei(balance - balanceOld, 'ether'), 4, "balance not 4 eth");
-
     });
-
 });
