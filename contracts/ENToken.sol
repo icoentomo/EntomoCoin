@@ -12,7 +12,7 @@ contract ENToken is BurnableToken {
     uint256 public constant initialSupply = 1300000 * (10 ** uint256(decimals));
 
     // Constructor
-    function ENToken() {
+    constructor() public {
         totalSupply = initialSupply;
         balances[msg.sender] = initialSupply; // Send all tokens to owner
     }

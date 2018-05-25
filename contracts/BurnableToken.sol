@@ -22,6 +22,6 @@ contract BurnableToken is StandardToken {
         address burner = msg.sender;
         balances[burner] = balances[burner].sub(_value);
         totalSupply = totalSupply.sub(_value);
-        Burn(burner, _value);
+        emit Burn(burner, _value);
     }
 }
